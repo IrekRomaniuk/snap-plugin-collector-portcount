@@ -6,7 +6,7 @@ max-failures: 10
 workflow:
   collect:
     metrics:
-      /niuk/portscan/* : {}
+      /niuk/portscan/*: {}
     config:
       /niuk/pingscan:
         target: "./pinglist.txt"

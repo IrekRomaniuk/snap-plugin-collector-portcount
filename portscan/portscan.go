@@ -27,7 +27,6 @@ import (
 	"github.com/intelsdi-x/snap/core"
 	"github.com/intelsdi-x/snap/core/ctypes"
 	"github.com/IrekRomaniuk/snap-plugin-collector-portscan/portscan/targets"
-	"github.com/IrekRomaniuk/snap-plugin-collector-portscan/portscan/scan"
 	"net"
 )
 const (
@@ -39,7 +38,7 @@ const (
 )
 var (
 	metricNames = []string{
-		"total-up",
+		"80",
 	}
 )
 type PortscanCollector struct {
@@ -57,9 +56,12 @@ GetMetricTypes() is started. The input will include a slice of all the metric ty
 
 The output is the collected metrics as plugin.Metric and an error.
 */
-func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metrics []plugin.MetricType, err error) {
+func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) ([]plugin.MetricType, error) {
 	var (
+		err error
 		target string
+		port string
+		timeout = time.Duration(1) * time.Second
 	)
 	conf := mts[0].Config().Table()
 	targetConf, ok := conf["target"]
@@ -68,41 +70,70 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metr
 	} else {
 		target = targetConf.(ctypes.ConfigValueStr).Value
 	}
+	portConf, ok := conf["port"]
+	if !ok || portConf.(ctypes.ConfigValueStr).Value == "" {
+		return nil, fmt.Errorf("port missing from config, %v", conf)
+	} else {
+		port = portConf.(ctypes.ConfigValueStr).Value
+	}
 
 	hosts, err := targets.ReadTargets(target)
 	if err != nil { return nil, fmt.Errorf("Error reading target: %v", err) }
 
-	for _, mt := range mts {
-		ns := mt.Namespace()
+	metrics, err := scan(hosts, port, timeout, mts)
+	if err != nil { return nil, err }
 
-		val := scan.Port(hosts)
+	return metrics, nil
+}
+
+func ScanTargets(hosts []string, port string, timeout time.Duration) int {
+	//fmt.Printf("%d %s %v\n",len(hosts), port, timeout)
+	var ports map[string]int
+	for _, host := range hosts {
+		fmt.Printf("\n%s\n",host)
+		conn, err := net.DialTimeout("tcp", host + ":" + port, timeout)
+		fmt.Printf("conn %v err %v",conn,err)
+		if err == nil {
+			ports[port]++
+			fmt.Printf("Connected %d",ports[port])
+			conn.Close()
+		} else {
+			fmt.Errorf("Error connecting: %v", err)
+		}
+	}
+	fmt.Printf("\n%d\n",ports[port])
+	return ports[port]
+}
+
+func scan(hosts []string, port string, timeout time.Duration, mts []plugin.MetricType) ([]plugin.MetricType, error) {
+	var ports map[string]int
+	for _, host := range hosts {
+		conn, err := net.DialTimeout("tcp", host+":"+port, timeout)
+		if err == nil {
+			ports[port]++
+		}
+		conn.Close()
+	}
+	metrics := make([]plugin.MetricType, 0, len(ports))
+	for _, m := range mts {
+		//ns := mt.Namespace()
+		p := m.Namespace()[2].Value
+		fmt.Println(p)
+		//val := m[port]
 		/*if err != nil {
 			return nil, fmt.Errorf("Error collecting metrics: %v", err)
 		}*/
 		//fmt.Println(val)
-		metric := plugin.MetricType{
-			Namespace_: ns,
-			Data_:      val,
-			Timestamp_: time.Now(),
+		if val, ok := ports[p]; ok {
+			mt := plugin.MetricType{
+				Namespace_: core.NewNamespace("niuk", "portscan", p),
+				Data_:      val,
+				Timestamp_: time.Now(),
+			}
+			metrics = append(metrics, mt)
 		}
-		metrics = append(metrics, metric)
 	}
 	return metrics, nil
-}
-
-func IsOpen (host string, timeout int) bool {
-	tcpAddr, err := net.ResolveTCPAddr("tcp4", host)
-	if err != nil {
-		return nil, err
-	}
-	conn, err := net.DialTimeout("tcp", tcpAddr.String(), timeout)
-	if err != nil {
-		return false
-	}
-
-	defer conn.Close()
-
-	return true
 }
 
 /*

@@ -23,15 +23,12 @@ import (
 
 	"github.com/intelsdi-x/snap/control/plugin"
 	"github.com/intelsdi-x/snap/control/plugin/cpolicy"
-	"github.com/intelsdi-x/snap/core"
+	//"github.com/intelsdi-x/snap/core"
 	"github.com/intelsdi-x/snap/core/cdata"
 	"github.com/intelsdi-x/snap/core/ctypes"
 	. "github.com/smartystreets/goconvey/convey"
 	. "github.com/IrekRomaniuk/snap-plugin-collector-portscan/portscan/targets"
-)
-
-const (
-	target = "./examples/iplist.txt"
+	"time"
 )
 
 func TestPortscanPlugin(t *testing.T) {
@@ -81,17 +78,21 @@ func TestPortscanPlugin(t *testing.T) {
 }
 
 func TestReadTargets(t *testing.T) {
-	Convey("Read Portlist.txt from examples ", t, func() {
-	target := "../examples/addrlist.txt"
-		hosts, _ := ReadTargets(target)
-		Convey("So iplist.txt should contain 3 items", func() {
-			So(len(hosts), ShouldEqual,3)
+	Convey("Read iplist.txt from examples ", t, func() {
+	target := "../examples/iplist.txt"
+	hosts, _ := ReadTargets(target)
+		Convey("So iplist.txt should contain 3 hosts", func() {
+			So(len(hosts), ShouldEqual,4)
+		})
+		Convey("So 2 hosts should have port 80 opened", func() {
+			count := ScanTargets(hosts, "80", time.Duration(1) * time.Second)
+			So(count, ShouldEqual,2)
 		})
 	})
 }
-
+/*
 func TestPortscanCollector_CollectMetrics(t *testing.T) {
-	cfg := setupCfg("../examples/iplist.txt")
+	cfg := setupCfg("../examples/iplist.txt","80")
 	Convey("Portscan collector", t, func() {
 		p := New()
 		mt, err := p.GetMetricTypes(cfg)
@@ -107,26 +108,27 @@ func TestPortscanCollector_CollectMetrics(t *testing.T) {
 					Config_: cfg.ConfigDataNode,
 				},
 			}
-			//fmt.Println(mts[0].Config().Table())
 			metrics, err := p.CollectMetrics(mts)
 			So(err, ShouldBeNil)
 			So(metrics, ShouldNotBeNil)
 			So(len(metrics), ShouldEqual, 1)
 			So(metrics[0].Namespace()[0].Value, ShouldEqual, "niuk")
 			So(metrics[0].Namespace()[1].Value, ShouldEqual, "portscan")
-			/*for _, m := range metrics {
+			for _, m := range metrics {
 				//fmt.Println(m.Namespace()[2].Value,m.Data())
-				So(m.Namespace()[2].Value, ShouldEqual, "total-up")
-				So(m.Data(), ShouldEqual, 2) //Assuming 8.8.8.8 and 4.2.2.2 are reachable
+				So(m.Namespace()[2].Value, ShouldEqual, "80")
+				So(m.Data(), ShouldEqual, 2) //Assuming 8.8.8.8:80 and 4.2.2.2:80
 				t.Log(m.Namespace()[2].Value, m.Data())
-			}*/
+			}
 		})
 	})
 }
+*/
 
-func setupCfg(target string) plugin.ConfigType {
+func setupCfg(target string, port string) plugin.ConfigType {
 	node := cdata.NewNode()
 	node.AddItem("target", ctypes.ConfigValueStr{Value: target})
+	node.AddItem("port", ctypes.ConfigValueStr{Value: target})
 	return plugin.ConfigType{ConfigDataNode: node}
 }
 
