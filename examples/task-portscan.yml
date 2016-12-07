@@ -1,0 +1,13 @@
+version: 1
+schedule:
+  type: "simple"
+  interval: "30s"
+max-failures: 10
+workflow:
+  collect:
+    metrics:
+      /niuk/portscan/* : {}
+    config:
+      /niuk/pingscan:
+        target: "./pinglist.txt"
+        port: "981"
