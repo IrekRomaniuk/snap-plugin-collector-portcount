@@ -28,7 +28,6 @@ import (
 	"github.com/intelsdi-x/snap/core/ctypes"
 	. "github.com/smartystreets/goconvey/convey"
 	. "github.com/IrekRomaniuk/snap-plugin-collector-portscan/portscan/targets"
-	"time"
 )
 
 func TestPortscanPlugin(t *testing.T) {
@@ -85,7 +84,7 @@ func TestReadTargets(t *testing.T) {
 			So(len(hosts), ShouldEqual,4)
 		})
 		Convey("So 2 hosts should have port 80 opened", func() {
-			count := ScanTargets(hosts, "80", time.Duration(1) * time.Second)
+			count := ScanTargets(hosts, "80", "1")
 			So(count, ShouldEqual,2)
 		})
 	})

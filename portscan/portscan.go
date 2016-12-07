@@ -86,19 +86,24 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) ([]pl
 	return metrics, nil
 }
 
-func ScanTargets(hosts []string, port string, timeout time.Duration) int {
+func ScanTargets(hosts []string, port string, timeout string) int {
 	//fmt.Printf("%d %s %v\n",len(hosts), port, timeout)
 	var ports map[string]int
+	timeoutDuration, err := time.ParseDuration(timeout)
+	if err != nil {
+		fmt.Errorf("Wrong time input format?: %v", err)
+	}
 	for _, host := range hosts {
 		fmt.Printf("\n%s\n",host)
-		conn, err := net.DialTimeout("tcp", host + ":" + port, timeout)
-		fmt.Printf("conn %v err %v",conn,err)
-		if err == nil {
+		conn, err := net.DialTimeout("tcp", host + ":" + port, timeoutDuration)
+		fmt.Printf("conn %v err %v", conn, err)
+		if err != nil {
+			fmt.Errorf("Error connecting: %v", err)
+
+		} else {
+			conn.Close()
 			ports[port]++
 			fmt.Printf("Connected %d",ports[port])
-			conn.Close()
-		} else {
-			fmt.Errorf("Error connecting: %v", err)
 		}
 	}
 	fmt.Printf("\n%d\n",ports[port])
