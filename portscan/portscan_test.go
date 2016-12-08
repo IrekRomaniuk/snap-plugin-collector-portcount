@@ -105,7 +105,7 @@ func TestPortscanCollector_CollectMetrics(t *testing.T) {
 			mts := []plugin.MetricType{
 				plugin.MetricType{
 					Namespace_: core.NewNamespace(
-						"niuk", "portscan","p53"),
+						"niuk", "portscan"),
 					Config_: cfg.ConfigDataNode,
 				},
 			}
@@ -117,7 +117,7 @@ func TestPortscanCollector_CollectMetrics(t *testing.T) {
 			So(metrics[0].Namespace()[1].Value, ShouldEqual, "portscan")
 			for _, m := range metrics {
 				//fmt.Println(m.Namespace()[2].Value,m.Data())
-				So(m.Namespace()[2].Value, ShouldEqual, "p53")
+				So(m.Namespace()[2].Value, ShouldEqual, "53")
 				So(m.Data(), ShouldEqual, 2) //Assuming 8.8.8.8:53 and 4.2.2.2:53 respond
 				t.Log(m.Namespace()[2].Value, m.Data())
 			}
