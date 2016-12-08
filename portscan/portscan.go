@@ -61,7 +61,7 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metr
 		timeout = time.Duration(1) * time.Second
 	)
 	conf := mts[0].Config().Table()
-        fmt.Println(conf)
+        //fmt.Println(conf)
 	targetConf, ok := conf["target"]
 	if !ok || targetConf.(ctypes.ConfigValueStr).Value == "" {
 		return nil, fmt.Errorf("target missing from config, %v", conf)
@@ -129,8 +129,10 @@ func (portscan *PortscanCollector) GetMetricTypes(cfg plugin.ConfigType) ([]plug
 func (portscan *PortscanCollector) GetConfigPolicy() (*cpolicy.ConfigPolicy, error) {
 	c := cpolicy.New()
 	rule0, _ := cpolicy.NewStringRule("target", true)
+	rule1, _ := cpolicy.NewStringRule("port", true)
 	cp := cpolicy.NewPolicyNode()
 	cp.Add(rule0)
+	cp.Add(rule1)
 	c.Add([]string{"niuk", "portscan"}, cp)
 	return c, nil
 }

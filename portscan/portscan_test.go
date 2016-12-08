@@ -60,7 +60,7 @@ func TestPortscanPlugin(t *testing.T) {
 				So(conf, ShouldNotBeNil)
 				So(conf.HasRules(), ShouldBeTrue)
 				tables := conf.RulesAsTable()
-				So(len(tables), ShouldEqual, 1)
+				So(len(tables), ShouldEqual, 2)
 				for _, rule := range tables {
 					So(rule.Name, ShouldBeIn, "target", "port")
 					switch rule.Name {
@@ -105,7 +105,7 @@ func TestPortscanCollector_CollectMetrics(t *testing.T) {
 			mts := []plugin.MetricType{
 				plugin.MetricType{
 					Namespace_: core.NewNamespace(
-						"niuk", "portscan", "total-up-test"),
+						"niuk", "portscan", "whatever"),
 					Config_: cfg.ConfigDataNode,
 				},
 			}
