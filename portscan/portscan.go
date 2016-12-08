@@ -35,7 +35,7 @@ const (
 )
 var (
 	metricNames = []string{
-		"total-up1",
+		"53",
 	}
 )
 type PortscanCollector struct {
@@ -61,7 +61,7 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metr
 		timeout = time.Duration(1) * time.Second
 	)
 	conf := mts[0].Config().Table()
-
+        fmt.Println(conf)
 	targetConf, ok := conf["target"]
 	if !ok || targetConf.(ctypes.ConfigValueStr).Value == "" {
 		return nil, fmt.Errorf("target missing from config, %v", conf)
