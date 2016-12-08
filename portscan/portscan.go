@@ -1,9 +1,6 @@
 /*
 http://www.apache.org/licenses/LICENSE-2.0.txt
 
-
-Copyright 2015 Intel Corporation
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -38,7 +35,7 @@ const (
 )
 var (
 	metricNames = []string{
-		"80",
+		"total-up1",
 	}
 )
 type PortscanCollector struct {
@@ -56,14 +53,15 @@ GetMetricTypes() is started. The input will include a slice of all the metric ty
 
 The output is the collected metrics as plugin.Metric and an error.
 */
-func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) ([]plugin.MetricType, error) {
+func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metrics []plugin.MetricType, err error) {
 	var (
-		err error
+		//err error
 		target string
 		port string
 		timeout = time.Duration(1) * time.Second
 	)
 	conf := mts[0].Config().Table()
+
 	targetConf, ok := conf["target"]
 	if !ok || targetConf.(ctypes.ConfigValueStr).Value == "" {
 		return nil, fmt.Errorf("target missing from config, %v", conf)
@@ -80,65 +78,31 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) ([]pl
 	hosts, err := targets.ReadTargets(target)
 	if err != nil { return nil, fmt.Errorf("Error reading target: %v", err) }
 
-	metrics, err := scan(hosts, port, timeout, mts)
-	if err != nil { return nil, err }
+	count, _ := scan(hosts, port, timeout)
 
+	metric := plugin.MetricType{
+		Namespace_: core.NewNamespace("niuk", "portscan", port), //ns
+		Data_:      count,
+		Timestamp_: time.Now(),
+	}
+	metrics = append(metrics, metric)
+	//metricNames = append(metricNames,port)
 	return metrics, nil
 }
 
-func ScanTargets(hosts []string, port string, timeout string) int {
-	//fmt.Printf("%d %s %v\n",len(hosts), port, timeout)
-	var ports map[string]int
-	timeoutDuration, err := time.ParseDuration(timeout)
-	if err != nil {
-		fmt.Errorf("Wrong time input format?: %v", err)
-	}
+func scan(hosts []string, port string, timeout time.Duration) (int, error) {
+	ports := make(map[string]int)
 	for _, host := range hosts {
-		fmt.Printf("\n%s\n",host)
-		conn, err := net.DialTimeout("tcp", host + ":" + port, timeoutDuration)
-		fmt.Printf("conn %v err %v", conn, err)
-		if err != nil {
-			fmt.Errorf("Error connecting: %v", err)
-
-		} else {
+		//fmt.Printf("%s\n", host + ":" + port)
+		conn, err := net.DialTimeout("tcp", host + ":" + port, timeout)
+		if err == nil {
 			conn.Close()
 			ports[port]++
-			fmt.Printf("Connected %d",ports[port])
+		} else {
+			//fmt.Errorf("No connection: %v", err)
 		}
 	}
-	fmt.Printf("\n%d\n",ports[port])
-	return ports[port]
-}
-
-func scan(hosts []string, port string, timeout time.Duration, mts []plugin.MetricType) ([]plugin.MetricType, error) {
-	var ports map[string]int
-	for _, host := range hosts {
-		conn, err := net.DialTimeout("tcp", host+":"+port, timeout)
-		if err == nil {
-			ports[port]++
-		}
-		conn.Close()
-	}
-	metrics := make([]plugin.MetricType, 0, len(ports))
-	for _, m := range mts {
-		//ns := mt.Namespace()
-		p := m.Namespace()[2].Value
-		fmt.Println(p)
-		//val := m[port]
-		/*if err != nil {
-			return nil, fmt.Errorf("Error collecting metrics: %v", err)
-		}*/
-		//fmt.Println(val)
-		if val, ok := ports[p]; ok {
-			mt := plugin.MetricType{
-				Namespace_: core.NewNamespace("niuk", "portscan", p),
-				Data_:      val,
-				Timestamp_: time.Now(),
-			}
-			metrics = append(metrics, mt)
-		}
-	}
-	return metrics, nil
+	return ports[port], nil
 }
 
 /*

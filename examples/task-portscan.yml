@@ -10,4 +10,4 @@ workflow:
     config:
       /niuk/pingscan:
         target: "./pinglist.txt"
-        port: "981"
+        port: "53"

@@ -23,11 +23,12 @@ import (
 
 	"github.com/intelsdi-x/snap/control/plugin"
 	"github.com/intelsdi-x/snap/control/plugin/cpolicy"
-	//"github.com/intelsdi-x/snap/core"
+	"github.com/intelsdi-x/snap/core"
 	"github.com/intelsdi-x/snap/core/cdata"
 	"github.com/intelsdi-x/snap/core/ctypes"
 	. "github.com/smartystreets/goconvey/convey"
 	. "github.com/IrekRomaniuk/snap-plugin-collector-portscan/portscan/targets"
+	"time"
 )
 
 func TestPortscanPlugin(t *testing.T) {
@@ -76,22 +77,23 @@ func TestPortscanPlugin(t *testing.T) {
 	})
 }
 
-func TestReadTargets(t *testing.T) {
+func TestReadScanTargets(t *testing.T) {
 	Convey("Read iplist.txt from examples ", t, func() {
 	target := "../examples/iplist.txt"
 	hosts, _ := ReadTargets(target)
-		Convey("So iplist.txt should contain 3 hosts", func() {
+		Convey("So iplist.txt should contain 4 hosts", func() {
 			So(len(hosts), ShouldEqual,4)
 		})
-		Convey("So 2 hosts should have port 80 opened", func() {
-			count := ScanTargets(hosts, "80", "1")
-			So(count, ShouldEqual,2)
+		Convey("So 2 hosts should have port 53 opened", func() {
+			count, _ := scan(hosts, "53", time.Duration(1) * time.Second)
+			So(count, ShouldEqual, 2)
 		})
 	})
 }
-/*
+
+
 func TestPortscanCollector_CollectMetrics(t *testing.T) {
-	cfg := setupCfg("../examples/iplist.txt","80")
+	cfg := setupCfg("../examples/iplist.txt", "53")
 	Convey("Portscan collector", t, func() {
 		p := New()
 		mt, err := p.GetMetricTypes(cfg)
@@ -103,7 +105,7 @@ func TestPortscanCollector_CollectMetrics(t *testing.T) {
 			mts := []plugin.MetricType{
 				plugin.MetricType{
 					Namespace_: core.NewNamespace(
-						"niuk", "portscan"),
+						"niuk", "portscan", "total-up2"),
 					Config_: cfg.ConfigDataNode,
 				},
 			}
@@ -115,19 +117,19 @@ func TestPortscanCollector_CollectMetrics(t *testing.T) {
 			So(metrics[0].Namespace()[1].Value, ShouldEqual, "portscan")
 			for _, m := range metrics {
 				//fmt.Println(m.Namespace()[2].Value,m.Data())
-				So(m.Namespace()[2].Value, ShouldEqual, "80")
-				So(m.Data(), ShouldEqual, 2) //Assuming 8.8.8.8:80 and 4.2.2.2:80
+				So(m.Namespace()[2].Value, ShouldEqual, "53")
+				So(m.Data(), ShouldEqual, 2) //Assuming 8.8.8.8:53 and 4.2.2.2:53 respond
 				t.Log(m.Namespace()[2].Value, m.Data())
 			}
 		})
 	})
 }
-*/
+
 
 func setupCfg(target string, port string) plugin.ConfigType {
 	node := cdata.NewNode()
 	node.AddItem("target", ctypes.ConfigValueStr{Value: target})
-	node.AddItem("port", ctypes.ConfigValueStr{Value: target})
+	node.AddItem("port", ctypes.ConfigValueStr{Value: port})
 	return plugin.ConfigType{ConfigDataNode: node}
 }
 
