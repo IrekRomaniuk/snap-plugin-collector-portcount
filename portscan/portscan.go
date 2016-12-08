@@ -81,7 +81,7 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metr
 	count, _ := scan(hosts, port, timeout)
 	for _, mt := range mts {
 		ns := mt.Namespace()
-		fmt.Println(mt.Namespace(),mt.Namespace()[2].Value) // /niuk/portscan/mt mt
+		//fmt.Println(mt.Namespace(),mt.Namespace()[2].Value) // /niuk/portscan/mt mt
 		metric := plugin.MetricType{
 			//Namespace_: core.NewNamespace("niuk", "portscan", "p53"), //ns
 			Namespace_: ns,
