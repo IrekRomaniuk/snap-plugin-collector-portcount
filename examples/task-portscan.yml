@@ -8,6 +8,6 @@ workflow:
     metrics:
       /niuk/portscan/*: {}
     config:
-      /niuk/pingscan:
+      /niuk/portscan:
         target: "./pinglist.txt"
         port: "53"
