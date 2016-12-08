@@ -35,7 +35,7 @@ const (
 )
 var (
 	metricNames = []string{
-		"53",
+		"p53",
 	}
 )
 type PortscanCollector struct {
@@ -81,11 +81,11 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metr
 	count, _ := scan(hosts, port, timeout)
 
 	metric := plugin.MetricType{
-		Namespace_: core.NewNamespace("niuk", "portscan", "53"), //ns
+		Namespace_: core.NewNamespace("niuk", "portscan", "p53"), //ns
 		Data_:      count,
 		Timestamp_: time.Now(),
 	}
-	//fmt.Println(metric.Namespace())
+	//fmt.Println(metric.Namespace(),metric.Namespace()[2].Value)
 	metrics = append(metrics, metric)
 	//metricNames = append(metricNames,port)
 	return metrics, nil
