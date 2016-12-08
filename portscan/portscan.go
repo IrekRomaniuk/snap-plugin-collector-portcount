@@ -81,10 +81,11 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metr
 	count, _ := scan(hosts, port, timeout)
 
 	metric := plugin.MetricType{
-		Namespace_: core.NewNamespace("niuk", "portscan", port), //ns
+		Namespace_: core.NewNamespace("niuk", "portscan", "53"), //ns
 		Data_:      count,
 		Timestamp_: time.Now(),
 	}
+	//fmt.Println(metric.Namespace())
 	metrics = append(metrics, metric)
 	//metricNames = append(metricNames,port)
 	return metrics, nil

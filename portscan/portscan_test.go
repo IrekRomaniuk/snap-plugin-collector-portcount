@@ -105,7 +105,7 @@ func TestPortscanCollector_CollectMetrics(t *testing.T) {
 			mts := []plugin.MetricType{
 				plugin.MetricType{
 					Namespace_: core.NewNamespace(
-						"niuk", "portscan", "whatever"),
+						"niuk", "portscan"),
 					Config_: cfg.ConfigDataNode,
 				},
 			}
