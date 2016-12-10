@@ -24,6 +24,7 @@ import (
 	"github.com/intelsdi-x/snap/core"
 	"github.com/intelsdi-x/snap/core/ctypes"
 	"github.com/IrekRomaniuk/snap-plugin-collector-portscan/portscan/targets"
+	//"github.com/intelsdi-x/snap-plugin-utilities/config"
 	"net"
 )
 const (
@@ -124,8 +125,9 @@ func (portscan *PortscanCollector) GetMetricTypes(cfg plugin.ConfigType) ([]plug
 		mts = append(mts, plugin.MetricType{
 			//Namespace_: core.NewNamespace("niuk", "portscan", metricName),
 			//Namespace_: createNamespace(metricName.ns),
-			Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("port_number","53").
+			Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("port","number").
 				AddStaticElement("blabla"),//?!
+			Description_: "port_number: " + "53",
 		})
 	//}
 	return mts, nil
