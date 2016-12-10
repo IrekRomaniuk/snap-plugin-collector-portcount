@@ -25,7 +25,6 @@ import (
 	"github.com/intelsdi-x/snap/core/ctypes"
 	"github.com/IrekRomaniuk/snap-plugin-collector-portscan/portscan/targets"
 	"net"
-	"strings"
 )
 const (
 	vendor        = "niuk"
