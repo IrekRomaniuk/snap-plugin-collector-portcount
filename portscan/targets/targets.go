@@ -3,18 +3,21 @@ package targets
 import (
 	"os"
 	"bufio"
+	"fmt"
 )
 
 func ReadTargets(target string) ([]string, error) {
-	var hosts []string
-	if pathExists(target) {
+	/*if pathExists(target) {
 		lines, err := readHosts(target)
 		hosts = DeleteEmpty(lines)
 		if err != nil {
 			if err != nil { return nil, err }
 		}
+	}*/
+	if !pathExists(target) {
+		return nil, fmt.Errorf("File %s does not exist", target)
 	}
-	return hosts, nil
+	return readHosts(target)
 }
 
 
@@ -38,7 +41,12 @@ func readHosts(path string) ([]string, error) {
 	var lines []string
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
+		//lines = append(lines, scanner.Text())
+		line := scanner.Text()
+		if line != "" {
+			// omit line if empty
+			lines = append(lines, scanner.Text())
+			}
 	}
 	return lines, scanner.Err()
 }

@@ -35,7 +35,7 @@ const (
 )
 var (
 	metricNames = []string{
-		"53",
+		//"53",
 	}
 )
 type PortscanCollector struct {
@@ -77,15 +77,37 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metr
 
 	hosts, err := targets.ReadTargets(target)
 	if err != nil { return nil, fmt.Errorf("Error reading target: %v", err) }
+	if len(hosts) == 0 { return nil, fmt.Errorf("No host defined in file %v", target)}
 
 	count, _ := scan(hosts, port, timeout)
 
 	metric := plugin.MetricType{
 		Namespace_: core.NewNamespace("niuk", "portscan", port), //ns
+		//Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("port_number", port),
 		Data_:      count,
 		Timestamp_: time.Now(),
 	}
+	//fmt.Print(metric.Namespace())
 	metrics = append(metrics, metric)
+
+	/*for _, mt := range mts {
+		ns := core.NewNamespace("niuk", "portscan").AddDynamicElement("port_number", port)
+		nns := mt.Namespace().Strings()
+		fmt.Println(ns)
+		isDynamic, indexes := mt.Namespace().IsDynamic()
+		if isDynamic {
+			for i, j := range indexes {
+				ns = append(ns[:j-i], ns[j-i+1:]...)
+			}
+		}
+		metric := plugin.MetricType{
+			Namespace_: nns,
+			//Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("port_number", port),
+			Data_:      count,
+			Timestamp_: time.Now(),
+		}
+		metrics = append(metrics, metric)
+	}*/
 	return metrics, nil
 }
 

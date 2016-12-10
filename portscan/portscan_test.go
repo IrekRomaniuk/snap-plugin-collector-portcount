@@ -1,9 +1,6 @@
 /*
 http://www.apache.org/licenses/LICENSE-2.0.txt
 
-
-Copyright 2016 Intel Corporation
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -96,11 +93,11 @@ func TestPortscanCollector_CollectMetrics(t *testing.T) {
 	cfg := setupCfg("../examples/iplist.txt", "53")
 	Convey("Portscan collector", t, func() {
 		p := New()
-		mt, err := p.GetMetricTypes(cfg)
+		/*mt, err := p.GetMetricTypes(cfg)
 		if err != nil {
 			t.Fatal(err)
 		}
-		So(len(mt), ShouldEqual, 1)
+		So(len(mt), ShouldEqual, 1)*/
 		Convey("collect metrics", func() {
 			mts := []plugin.MetricType{
 				plugin.MetricType{
