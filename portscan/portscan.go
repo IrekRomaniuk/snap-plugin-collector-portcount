@@ -25,6 +25,7 @@ import (
 	"github.com/intelsdi-x/snap/core/ctypes"
 	"github.com/IrekRomaniuk/snap-plugin-collector-portscan/portscan/targets"
 	"net"
+	"strings"
 )
 const (
 	vendor        = "niuk"
@@ -120,24 +121,16 @@ func scan(hosts []string, port string, timeout time.Duration) (int, error) {
 func (portscan *PortscanCollector) GetMetricTypes(cfg plugin.ConfigType) ([]plugin.MetricType, error) {
 	mts := []plugin.MetricType{}
 
-	var port string
-	conf := mts[0].Config().Table()
-	portConf, ok := conf["port"]
-	if !ok || portConf.(ctypes.ConfigValueStr).Value == "" {
-		return nil, fmt.Errorf("port missing from config, %v", conf)
-	} else {
-		port = portConf.(ctypes.ConfigValueStr).Value
-	}
-	metricNames = append(metricNames, port)
-
-	for _, metricName := range metricNames {
+	//for _, metricName := range metricNames {
 		mts = append(mts, plugin.MetricType{
-			Namespace_: core.NewNamespace("niuk", "portscan", metricName),
+			//Namespace_: core.NewNamespace("niuk", "portscan", metricName),
+			//Namespace_: createNamespace(metricName.ns),
+			Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("port_number","53"),
+			Description_: "port_number",
 		})
-	}
+	//}
 	return mts, nil
 }
-
 
 // GetConfigPolicy returns plugin configuration
 func (portscan *PortscanCollector) GetConfigPolicy() (*cpolicy.ConfigPolicy, error) {

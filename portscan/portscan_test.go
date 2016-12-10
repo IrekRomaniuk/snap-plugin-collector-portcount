@@ -93,11 +93,11 @@ func TestPortscanCollector_CollectMetrics(t *testing.T) {
 	cfg := setupCfg("../examples/iplist.txt", "53")
 	Convey("Portscan collector", t, func() {
 		p := New()
-		/*mt, err := p.GetMetricTypes(cfg)
+		mt, err := p.GetMetricTypes(cfg)
 		if err != nil {
 			t.Fatal(err)
 		}
-		So(len(mt), ShouldEqual, 1)*/
+		So(len(mt), ShouldEqual, 1)
 		Convey("collect metrics", func() {
 			mts := []plugin.MetricType{
 				plugin.MetricType{
