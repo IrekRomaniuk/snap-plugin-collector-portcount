@@ -125,9 +125,9 @@ func (portscan *PortscanCollector) GetMetricTypes(cfg plugin.ConfigType) ([]plug
 		mts = append(mts, plugin.MetricType{
 			//Namespace_: core.NewNamespace("niuk", "portscan", metricName),
 			//Namespace_: createNamespace(metricName.ns),
-			Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("port","number").
+			Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("Name","Description").
 				AddStaticElement("blabla"),//?!
-			Description_: "port_number: " + "53",
+			//Description_: "Name_Description: " ,
 		})
 	//}
 	return mts, nil
