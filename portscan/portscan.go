@@ -90,24 +90,6 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metr
 	//fmt.Print(metric.Namespace())
 	metrics = append(metrics, metric)
 
-	/*for _, mt := range mts {
-		ns := core.NewNamespace("niuk", "portscan").AddDynamicElement("port_number", port)
-		nns := mt.Namespace().Strings()
-		fmt.Println(ns)
-		isDynamic, indexes := mt.Namespace().IsDynamic()
-		if isDynamic {
-			for i, j := range indexes {
-				ns = append(ns[:j-i], ns[j-i+1:]...)
-			}
-		}
-		metric := plugin.MetricType{
-			Namespace_: nns,
-			//Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("port_number", port),
-			Data_:      count,
-			Timestamp_: time.Now(),
-		}
-		metrics = append(metrics, metric)
-	}*/
 	return metrics, nil
 }
 
@@ -137,6 +119,16 @@ func scan(hosts []string, port string, timeout time.Duration) (int, error) {
 */
 func (portscan *PortscanCollector) GetMetricTypes(cfg plugin.ConfigType) ([]plugin.MetricType, error) {
 	mts := []plugin.MetricType{}
+
+	var port string
+	conf := mts[0].Config().Table()
+	portConf, ok := conf["port"]
+	if !ok || portConf.(ctypes.ConfigValueStr).Value == "" {
+		return nil, fmt.Errorf("port missing from config, %v", conf)
+	} else {
+		port = portConf.(ctypes.ConfigValueStr).Value
+	}
+	metricNames = append(metricNames, port)
 
 	for _, metricName := range metricNames {
 		mts = append(mts, plugin.MetricType{
