@@ -62,6 +62,7 @@ $ snaptel metric list
 
 Create a task manifest file (see below) and put full path to the [file](https://github.com/IrekRomaniuk/snap-plugin-collector-portcount/blob/master/examples/pinglist.txt) listing IP addresses:
 ```yaml
+deadline: "15s"
 version: 1
 schedule:
   type: "simple"
