@@ -26,6 +26,7 @@ import (
 	"github.com/IrekRomaniuk/snap-plugin-collector-portscan/portscan/targets"
 	//"github.com/intelsdi-x/snap-plugin-utilities/config"
 	"net"
+	"sync"
 )
 const (
 	vendor        = "niuk"
@@ -80,7 +81,7 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metr
 	if err != nil { return nil, fmt.Errorf("Error reading target: %v", err) }
 	if len(hosts) == 0 { return nil, fmt.Errorf("No host defined in file %v", target)}
 
-	count, _ := scan(hosts, port, timeout)
+	count, _ := scan2(hosts, port, timeout)
 
 	metric := plugin.MetricType{
 		Namespace_: core.NewNamespace("niuk", "portscan", port), //ns
@@ -109,6 +110,34 @@ func scan(hosts []string, port string, timeout time.Duration) (int, error) {
 	return ports[port], nil
 }
 
+func scan2(hosts []string, port string, timeout time.Duration) (int, error) {
+	d := net.Dialer{Timeout: timeout}
+	p := make(chan struct{}, 500) // make 500 parallel connection
+	wg := sync.WaitGroup{}
+        var result int
+
+	c := func(host string) {
+		conn, err := d.Dial(`tcp`, fmt.Sprintf(`%s:%s`, host, port))
+		if err == nil {
+			conn.Close()
+			//fmt.Printf("%d passed\n", port)
+			result ++
+		}
+		<-p
+		wg.Done()
+	}
+
+	wg.Add(len(hosts))
+	for _, host := range hosts {
+		p <- struct{}{}
+		go c(host)
+	}
+	wg.Wait()
+
+
+       return result, nil
+}
+
 /*
 	GetMetricTypes returns metric types for testing.
 	GetMetricTypes() will be called when your plugin is loaded in order to populate the metric catalog(where snaps stores all
@@ -125,7 +154,7 @@ func (portscan *PortscanCollector) GetMetricTypes(cfg plugin.ConfigType) ([]plug
 		mts = append(mts, plugin.MetricType{
 			//Namespace_: core.NewNamespace("niuk", "portscan", metricName),
 			//Namespace_: createNamespace(metricName.ns),
-			Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("Name","Description").
+			Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("Port","Port to scan").
 				AddStaticElement("port_number"),//?!
 			//Description_: "Name_Description: " ,
 		})
