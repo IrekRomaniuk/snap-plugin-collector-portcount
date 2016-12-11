@@ -1,4 +1,4 @@
-# ]snap-plugin-collector-portcount](https://img.shields.io/badge/version-development-red.svg)
+# [snap-plugin-collector-portcount](https://img.shields.io/badge/version-development-red.svg)
 
 This plugin counts open ports of responding hosts based on [redforks portscan](https://github.com/redforks/portscan)
 
