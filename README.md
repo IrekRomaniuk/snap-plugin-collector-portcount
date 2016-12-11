@@ -71,9 +71,9 @@ max-failures: 10
 workflow:
   collect:
     metrics:
-      /niuk/portscan/*: {}
+      /niuk/portcount/*: {}
     config:
-      /niuk/portscan:
+      /niuk/portcount:
         target: "/global/path/iplist.txt"
         port: "53"
 ```
@@ -84,7 +84,7 @@ $ snaptel plugin load snap-plugin-publisher-influxdb
 
 Create a task:
 ```
-$ snaptel task create -t task-portscan.yml -n portcount-981
+$ snaptel task create -t task-portcount.yml -n portcount-981
 Using task manifest to create task
 Task created
 ID: 30d8c7d1-4cec-4eec-a787-3eaa2a088436
@@ -102,7 +102,7 @@ Watch the task
 $ snaptel task watch 30d8c7d1-4cec-4eec-a787-3eaa2a088436
 Watching Task (30d8c7d1-4cec-4eec-a787-3eaa2a088436):
 NAMESPACE                DATA    TIMESTAMP
-/niuk/portscan/981       305     2016-12-11 13:19:47.785976086 -0500 EST
+/niuk/portcount/981       305     2016-12-11 13:19:47.785976086 -0500 EST
 ```
 Watch metrics in real-time using [Snap plugin for Grafana] (https://blog.raintank.io/using-grafana-with-intels-snap-for-ad-hoc-metric-exploration/)
 

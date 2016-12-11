@@ -1,3 +1,4 @@
+deadline: "15s"
 version: 1
 schedule:
   type: "simple"
