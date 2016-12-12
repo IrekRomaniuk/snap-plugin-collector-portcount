@@ -10,5 +10,5 @@ workflow:
       /niuk/portscan/*: {}
     config:
       /niuk/portscan:
-        target: "/global/path/pinglist.txt"
+        target: "/global/path/iplist.txt"
         port: "53"
