@@ -53,7 +53,7 @@ func TestPortcountPlugin(t *testing.T) {
 				So(configPolicy, ShouldHaveSameTypeAs, &cpolicy.ConfigPolicy{})
 			})
 			Convey("So config policy namespace should be /niuk/portcount", func() {
-				conf := configPolicy.Get([]string{"niuk", "portcount"})
+				conf := configPolicy.Get([]string{vendor, fs})
 				So(conf, ShouldNotBeNil)
 				So(conf.HasRules(), ShouldBeTrue)
 				tables := conf.RulesAsTable()
@@ -102,7 +102,7 @@ func TestPortcountCollector_CollectMetrics(t *testing.T) {
 			mts := []plugin.MetricType{
 				plugin.MetricType{
 					Namespace_: core.NewNamespace(
-						"niuk", "portcount"),
+						vendor, fs),
 					Config_: cfg.ConfigDataNode,
 				},
 			}
@@ -110,8 +110,8 @@ func TestPortcountCollector_CollectMetrics(t *testing.T) {
 			So(err, ShouldBeNil)
 			So(metrics, ShouldNotBeNil)
 			So(len(metrics), ShouldEqual, 1)
-			So(metrics[0].Namespace()[0].Value, ShouldEqual, "niuk")
-			So(metrics[0].Namespace()[1].Value, ShouldEqual, "portcount")
+			So(metrics[0].Namespace()[0].Value, ShouldEqual, vendor)
+			So(metrics[0].Namespace()[1].Value, ShouldEqual, fs)
 			for _, m := range metrics {
 				//fmt.Println(m.Namespace()[2].Value,m.Data())
 				So(m.Namespace()[2].Value, ShouldEqual, "53")
