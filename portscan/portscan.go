@@ -35,11 +35,6 @@ const (
 	pluginVersion = 1
 	pluginType    = plugin.CollectorPluginType
 )
-var (
-	metricNames = []string{
-		//"53",
-	}
-)
 type PortscanCollector struct {
 }
 
@@ -81,11 +76,10 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metr
 	if err != nil { return nil, fmt.Errorf("Error reading target: %v", err) }
 	if len(hosts) == 0 { return nil, fmt.Errorf("No host defined in file %v", target)}
 
-	count, _ := scan2(hosts, port, timeout)
+	count, _ := scan(hosts, port, timeout)
 
 	metric := plugin.MetricType{
 		Namespace_: core.NewNamespace("niuk", "portscan", port), //ns
-		//Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("port_number", port),
 		Data_:      count,
 		Timestamp_: time.Now(),
 	}
@@ -96,21 +90,6 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metr
 }
 
 func scan(hosts []string, port string, timeout time.Duration) (int, error) {
-	ports := make(map[string]int)
-	for _, host := range hosts {
-		//fmt.Printf("%s\n", host + ":" + port)
-		conn, err := net.DialTimeout("tcp", host + ":" + port, timeout)
-		if err == nil {
-			conn.Close()
-			ports[port]++
-		} else {
-			//fmt.Errorf("No connection: %v", err)
-		}
-	}
-	return ports[port], nil
-}
-
-func scan2(hosts []string, port string, timeout time.Duration) (int, error) {
 	d := net.Dialer{Timeout: timeout}
 	p := make(chan struct{}, 500) // make 500 parallel connection
 	wg := sync.WaitGroup{}
@@ -152,10 +131,8 @@ func (portscan *PortscanCollector) GetMetricTypes(cfg plugin.ConfigType) ([]plug
 
 	//for _, metricName := range metricNames {
 		mts = append(mts, plugin.MetricType{
-			//Namespace_: core.NewNamespace("niuk", "portscan", metricName),
-			//Namespace_: createNamespace(metricName.ns),
 			Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("Port","Port to scan").
-				AddStaticElement("port_number"),//?!
+				AddStaticElement("responding_hosts"),//?!
 			//Description_: "Name_Description: " ,
 		})
 	//}
