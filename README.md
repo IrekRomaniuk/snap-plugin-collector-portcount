@@ -108,6 +108,7 @@ NAMESPACE                DATA    TIMESTAMP
 /niuk/portcount/981       305     2016-12-11 13:19:47.785976086 -0500 EST
 ```
 Watch metrics in real-time using [Snap plugin for Grafana] (https://blog.raintank.io/using-grafana-with-intels-snap-for-ad-hoc-metric-exploration/)
+and use InfluxDB plugin for publishing ![Alt text](examples/grafana-portcount.JPG "Metrics published to InfluxDB")
 
 ## License
 This plugin is Open Source software released under the Apache 2.0 [License](LICENSE).
@@ -120,6 +121,7 @@ Initial release
 ### TODO
 
 * add multiple port count, i.e. port="53,80"
+* add timeout and concurrent in manifest
 
 ## Acknowledgements
 * Author: [@IrekRomaniuk](https://github.com/IrekRomaniuk/)
