@@ -79,7 +79,7 @@ func (portcount *PortcountCollector) CollectMetrics(mts []plugin.MetricType) (me
 	count, _ := scan(hosts, port, timeout)
 
 	metric := plugin.MetricType{
-		Namespace_: core.NewNamespace("niuk", "portcount", port), //ns
+		Namespace_: core.NewNamespace(vendor, fs, port), //ns
 		Data_:      count,
 		Timestamp_: time.Now(),
 	}
@@ -131,7 +131,7 @@ func (portcount *PortcountCollector) GetMetricTypes(cfg plugin.ConfigType) ([]pl
 
 	//for _, metricName := range metricNames {
 		mts = append(mts, plugin.MetricType{
-			Namespace_: core.NewNamespace("niuk", "portcount").AddDynamicElement("Port","Port to scan").
+			Namespace_: core.NewNamespace(vendor, fs).AddDynamicElement("Port","Port to scan").
 				AddStaticElement("total_up"),//?!
 			//Description_: "Name_Description: " ,
 		})
@@ -147,7 +147,7 @@ func (portcount *PortcountCollector) GetConfigPolicy() (*cpolicy.ConfigPolicy, e
 	cp := cpolicy.NewPolicyNode()
 	cp.Add(rule0)
 	cp.Add(rule1)
-	c.Add([]string{"niuk", "portcount"}, cp)
+	c.Add([]string{vendor, fs}, cp)
 	return c, nil
 }
 
