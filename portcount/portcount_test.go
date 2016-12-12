@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package portscan
+package portcount
 
 import (
 	"testing"
@@ -24,24 +24,24 @@ import (
 	"github.com/intelsdi-x/snap/core/cdata"
 	"github.com/intelsdi-x/snap/core/ctypes"
 	. "github.com/smartystreets/goconvey/convey"
-	. "github.com/IrekRomaniuk/snap-plugin-collector-portscan/portscan/targets"
+	. "github.com/IrekRomaniuk/snap-plugin-collector-portcount/portcount/targets"
 	"time"
 )
 
-func TestPortscanPlugin(t *testing.T) {
+func TestPortcountPlugin(t *testing.T) {
 	Convey("Meta should return metadata for the plugin", t, func() {
 		meta := Meta()
 		So(meta.Name, ShouldResemble, pluginName )
 		So(meta.Version, ShouldResemble, pluginVersion)
 		So(meta.Type, ShouldResemble, plugin.CollectorPluginType)
 	})
-	Convey("Create Portscan Collector", t, func() {
+	Convey("Create Portcount Collector", t, func() {
 		collector := New()
-		Convey("So Portscan collector should not be nil", func() {
+		Convey("So Portcount collector should not be nil", func() {
 			So(collector, ShouldNotBeNil)
 		})
-		Convey("So Portscan collector should be of Portscan type", func() {
-			So(collector, ShouldHaveSameTypeAs, &PortscanCollector{})
+		Convey("So Portcount collector should be of Portcount type", func() {
+			So(collector, ShouldHaveSameTypeAs, &PortcountCollector{})
 		})
 		Convey("collector.GetConfigPolicy() should return a config policy", func() {
 			configPolicy, _ := collector.GetConfigPolicy()
@@ -52,8 +52,8 @@ func TestPortscanPlugin(t *testing.T) {
 			Convey("So config policy should be a cpolicy.ConfigPolicy", func() {
 				So(configPolicy, ShouldHaveSameTypeAs, &cpolicy.ConfigPolicy{})
 			})
-			Convey("So config policy namespace should be /niuk/portscan", func() {
-				conf := configPolicy.Get([]string{"niuk", "portscan"})
+			Convey("So config policy namespace should be /niuk/portcount", func() {
+				conf := configPolicy.Get([]string{"niuk", "portcount"})
 				So(conf, ShouldNotBeNil)
 				So(conf.HasRules(), ShouldBeTrue)
 				tables := conf.RulesAsTable()
@@ -89,9 +89,9 @@ func TestReadScanTargets(t *testing.T) {
 }
 
 
-func TestPortscanCollector_CollectMetrics(t *testing.T) {
+func TestPortcountCollector_CollectMetrics(t *testing.T) {
 	cfg := setupCfg("../examples/iplist.txt", "53")
-	Convey("Portscan collector", t, func() {
+	Convey("Portcount collector", t, func() {
 		p := New()
 		mt, err := p.GetMetricTypes(cfg)
 		if err != nil {
@@ -102,7 +102,7 @@ func TestPortscanCollector_CollectMetrics(t *testing.T) {
 			mts := []plugin.MetricType{
 				plugin.MetricType{
 					Namespace_: core.NewNamespace(
-						"niuk", "portscan"),
+						"niuk", "portcount"),
 					Config_: cfg.ConfigDataNode,
 				},
 			}
@@ -111,7 +111,7 @@ func TestPortscanCollector_CollectMetrics(t *testing.T) {
 			So(metrics, ShouldNotBeNil)
 			So(len(metrics), ShouldEqual, 1)
 			So(metrics[0].Namespace()[0].Value, ShouldEqual, "niuk")
-			So(metrics[0].Namespace()[1].Value, ShouldEqual, "portscan")
+			So(metrics[0].Namespace()[1].Value, ShouldEqual, "portcount")
 			for _, m := range metrics {
 				//fmt.Println(m.Namespace()[2].Value,m.Data())
 				So(m.Namespace()[2].Value, ShouldEqual, "53")

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package portscan
+package portcount
 
 import (
 	"fmt"
@@ -23,24 +23,24 @@ import (
 	"github.com/intelsdi-x/snap/control/plugin/cpolicy"
 	"github.com/intelsdi-x/snap/core"
 	"github.com/intelsdi-x/snap/core/ctypes"
-	"github.com/IrekRomaniuk/snap-plugin-collector-portscan/portscan/targets"
+	"github.com/IrekRomaniuk/snap-plugin-collector-portcount/portcount/targets"
 	//"github.com/intelsdi-x/snap-plugin-utilities/config"
 	"net"
 	"sync"
 )
 const (
 	vendor        = "niuk"
-	fs            = "portscan"
-	pluginName    = "portscan"
+	fs            = "portcount"
+	pluginName    = "portcount"
 	pluginVersion = 1
 	pluginType    = plugin.CollectorPluginType
 )
-type PortscanCollector struct {
+type PortcountCollector struct {
 }
 
-func New() *PortscanCollector {
-	portscan := &PortscanCollector{}
-	return portscan
+func New() *PortcountCollector {
+	portcount := &PortcountCollector{}
+	return portcount
 }
 
 /*  CollectMetrics collects metrics for testing.
@@ -50,7 +50,7 @@ GetMetricTypes() is started. The input will include a slice of all the metric ty
 
 The output is the collected metrics as plugin.Metric and an error.
 */
-func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metrics []plugin.MetricType, err error) {
+func (portcount *PortcountCollector) CollectMetrics(mts []plugin.MetricType) (metrics []plugin.MetricType, err error) {
 	var (
 		//err error
 		target string
@@ -79,7 +79,7 @@ func (portscan *PortscanCollector) CollectMetrics(mts []plugin.MetricType) (metr
 	count, _ := scan(hosts, port, timeout)
 
 	metric := plugin.MetricType{
-		Namespace_: core.NewNamespace("niuk", "portscan", port), //ns
+		Namespace_: core.NewNamespace("niuk", "portcount", port), //ns
 		Data_:      count,
 		Timestamp_: time.Now(),
 	}
@@ -126,12 +126,12 @@ func scan(hosts []string, port string, timeout time.Duration) (int, error) {
 
 	The metrics returned will be advertised to users who list all the metrics and will become targetable by tasks.
 */
-func (portscan *PortscanCollector) GetMetricTypes(cfg plugin.ConfigType) ([]plugin.MetricType, error) {
+func (portcount *PortcountCollector) GetMetricTypes(cfg plugin.ConfigType) ([]plugin.MetricType, error) {
 	mts := []plugin.MetricType{}
 
 	//for _, metricName := range metricNames {
 		mts = append(mts, plugin.MetricType{
-			Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("Port","Port to scan").
+			Namespace_: core.NewNamespace("niuk", "portcount").AddDynamicElement("Port","Port to scan").
 				AddStaticElement("total_up"),//?!
 			//Description_: "Name_Description: " ,
 		})
@@ -140,14 +140,14 @@ func (portscan *PortscanCollector) GetMetricTypes(cfg plugin.ConfigType) ([]plug
 }
 
 // GetConfigPolicy returns plugin configuration
-func (portscan *PortscanCollector) GetConfigPolicy() (*cpolicy.ConfigPolicy, error) {
+func (portcount *PortcountCollector) GetConfigPolicy() (*cpolicy.ConfigPolicy, error) {
 	c := cpolicy.New()
 	rule0, _ := cpolicy.NewStringRule("target", true)
 	rule1, _ := cpolicy.NewStringRule("port", true)
 	cp := cpolicy.NewPolicyNode()
 	cp.Add(rule0)
 	cp.Add(rule1)
-	c.Add([]string{"niuk", "portscan"}, cp)
+	c.Add([]string{"niuk", "portcount"}, cp)
 	return c, nil
 }
 

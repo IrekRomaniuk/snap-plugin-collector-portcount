@@ -19,15 +19,15 @@ package main
 import (
 	"os"
 
-	"github.com/IrekRomaniuk/snap-plugin-collector-portscan/portscan"
+	"github.com/IrekRomaniuk/snap-plugin-collector-portcount/portcount"
 	"github.com/intelsdi-x/snap/control/plugin"
 )
 
 /*const (
-	pluginName    = "portscan"
+	pluginName    = "portcount"
 	pluginVersion = 1
 )*/
 
 func main() {
-	plugin.Start(portscan.Meta(), portscan.New(), os.Args[1])
+	plugin.Start(portcount.Meta(), portcount.New(), os.Args[1])
 }
