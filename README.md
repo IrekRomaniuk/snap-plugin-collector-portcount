@@ -55,7 +55,7 @@ List available plugins
 ```
 $ snaptel plugin list
 NAME                     VERSION         TYPE            SIGNED          STATUS          LOADED TIME
-portscan                 1               collector       false           loaded          Sun, 11 Dec 2016 13:02:43 EST
+portcount                 1               collector       false           loaded          Sun, 11 Dec 2016 13:02:43 EST
 ```
 See available metrics for your system
 ```
