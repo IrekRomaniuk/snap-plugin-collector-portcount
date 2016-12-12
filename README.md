@@ -41,7 +41,7 @@ This plugin has the ability to gather the following metric:
 
 Namespace | Description
 ----------|-----------------------
-/niuk/portcount/[port]/responding_hosts | total number of hosts responding on port
+/niuk/portcount/[port]/total_up | total number of hosts responding on port
 
 
 ### Example

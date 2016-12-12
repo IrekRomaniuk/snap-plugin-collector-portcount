@@ -132,7 +132,7 @@ func (portscan *PortscanCollector) GetMetricTypes(cfg plugin.ConfigType) ([]plug
 	//for _, metricName := range metricNames {
 		mts = append(mts, plugin.MetricType{
 			Namespace_: core.NewNamespace("niuk", "portscan").AddDynamicElement("Port","Port to scan").
-				AddStaticElement("responding_hosts"),//?!
+				AddStaticElement("total_up"),//?!
 			//Description_: "Name_Description: " ,
 		})
 	//}
